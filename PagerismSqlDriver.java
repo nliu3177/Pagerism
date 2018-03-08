@@ -5,8 +5,8 @@ public class PagerismSqlDriver {
 	final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	final String DB_URL="jdbc:mysql://pagerism.ddns.net/Pagerism";
 	
-	final String USER ="root";
-	final String PASSWORD ="password";
+	final String USER ="golder";
+	final String PASSWORD ="aurum";
 	
 	//Creates Connection to Mysql database, don't mess with this
 	Connection connectingTo(){
@@ -98,6 +98,12 @@ public class PagerismSqlDriver {
 		}
 		
 		return id;
+	}
+	
+	// Creates new user
+	void registerUser(String username, String password){
+		String query = "insert into users(USERNAME, PASSWORD, ACCOUNT) values(" + username + "," + password + ", 'Customer';";
+		executeStuff(query);
 	}
 	
 	//Finds books with titles that contain the given string in its name
