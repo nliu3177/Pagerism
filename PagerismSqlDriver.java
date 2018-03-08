@@ -5,8 +5,8 @@ public class PagerismSqlDriver {
 	final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	final String DB_URL="jdbc:mysql://pagerism.ddns.net/Pagerism";
 	
-	final String USER ="root";
-	final String PASSWORD ="password";
+	final String USER ="golder";
+	final String PASSWORD ="aurum";
 	
 	//Creates Connection to Mysql database, don't mess with this
 	Connection connectingTo(){
