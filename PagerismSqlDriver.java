@@ -44,8 +44,6 @@ public class PagerismSqlDriver {
 			
 			PreparedStatement hopeful = conn.prepareStatement(query);
 			ResultSet rs = hopeful.executeQuery(query);
-			conn.close();
-			hopeful.close();
 			
 			return rs;
 			}
@@ -68,7 +66,7 @@ public class PagerismSqlDriver {
 	// Shows the users cart when given the id of the user
 	ResultSet selectCart(int id)
 	{
-		String query = "select title, price from bookInfo natural join cart where userid =";
+		String query = "select TITLE, price from bookInfo natural join cart where id =";
 		query += id;
 		
 		return executeStuff(query);
@@ -83,14 +81,14 @@ public class PagerismSqlDriver {
 	
 	//Returns the user's id if there exists an account with the username and password
 	//The user id is useful for the other queries
-	String logIn(String username, String password){
+	int logIn(String username, String password){
 		String query = "select * from users where USERNAME =" + username + "and PASSWORD =" + password +";";
 		ResultSet rs = executeStuff(query);
 		
-		String id ="";
+		int id = -1;
 		
 		try{
-			id = rs.getString("id");
+			id = rs.getInt(0);
 		}
 		catch(Exception e)
 		{
@@ -112,4 +110,41 @@ public class PagerismSqlDriver {
 		String query = "select * from bookInfo where title like '%" + title + "%';";
 		return executeStuff(query);
 	}
+	
+	int getUserId(String username)
+	{
+		String query = "select id from users where USERNAME =" + username;
+		ResultSet rs = executeStuff(query);
+		
+		int id = -1;
+		
+		try{
+			id = rs.getInt(0);
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		return id;
+	}
+	
+	int getBookId(String booktitle)
+	{
+		String query = "select bookid from bookInfo where TITLE =" + booktitle;
+		ResultSet rs = executeStuff(query);
+		
+		int id = -1;
+		
+		try{
+			id = rs.getInt(7);
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		return id;
+	}
+	
 }
