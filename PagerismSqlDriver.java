@@ -66,16 +66,14 @@ public class PagerismSqlDriver {
 	// Shows the users cart when given the id of the user
 	ResultSet selectCart(int id)
 	{
-		String query = "select TITLE, price from bookInfo natural join cart where id =";
-		query += id;
-		
+		String query = "select * from cart where userid =" + Integer.toString(id) +";";
 		return executeStuff(query);
 	}
 	
 	// Insert into the cart using the users id and the books id
 	void addToCart(int userid, int bookid)
 	{
-		String query = "insert into cart values(" + bookid + ", " + userid +");";
+		String query = "insert into cart bookid, userid values(" + bookid + ", " + userid +");";
 		executeStuff(query);
 	}
 	
@@ -119,7 +117,7 @@ public class PagerismSqlDriver {
 		int id = -1;
 		
 		try{
-			id = rs.getInt(0);
+			id = rs.getInt("id");
 		}
 		catch(Exception e)
 		{
@@ -137,7 +135,7 @@ public class PagerismSqlDriver {
 		int id = -1;
 		
 		try{
-			id = rs.getInt(7);
+			id = rs.getInt("bookid");
 		}
 		catch(Exception e)
 		{
@@ -146,5 +144,40 @@ public class PagerismSqlDriver {
 		
 		return id;
 	}
+
+	// Inserts all the books in the cart into the newest order of the given userid
+	// Make sure to use CreateOrder first
+	void CreateOrderItems(int userid)
+	{
+		String query = "insert into orderitems(ordernum, booknum) select ordernum,bookid from cart, orders where cart.userid =" + userid + " and orders.userid = " + userid + " and orders.ordernum = (select max(ordernum) from orders);";
+		executeStuff(query);
+	}
 	
+	//Creates a new order for the user
+	void CreateOrder(int userid)
+	{
+		String query = "insert into orders(userid) values " + userid + ";";
+		executeStuff(query);
+		
+	}
+	
+	ResultSet displayOrderNums(int userid)
+	{
+		String query = "select * from orders where userid =" + userid +";";
+		ResultSet rs = executeStuff(query);
+		return rs;
+	}
+
+	ResultSet displayOrderContents(int ordernum)
+	{
+		String query = "select * from bookInfo where bookid in (select booknum from orderitems where ordernum =" +ordernum+");";
+		ResultSet rs = executeStuff(query);
+		return rs;
+	}
+	
+	void deleteCart(int userid)
+	{
+		String query = "delete from cart where userid =" +userid+";";
+		executeStuff(query);
+	}
 }
