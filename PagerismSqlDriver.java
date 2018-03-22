@@ -54,6 +54,33 @@ public class PagerismSqlDriver {
 			
 			return null;
 	}
+	
+	//Updates data in tables
+	void executeInfoStuff(String query){
+		Connection conn = connectingTo();
+		
+			try{
+			PreparedStatement hopeful = conn.prepareStatement(query);
+			hopeful.executeUpdate(query);
+			}
+			catch(Exception e)
+			{
+				
+			}
+	}
+	
+	void executeDeleteStuff(String query){
+		Connection conn = connectingTo();
+		
+			try{
+			PreparedStatement hopeful = conn.prepareStatement(query);
+			hopeful.execute(query);
+			}
+			catch(Exception e)
+			{
+				
+			}
+	}
 	// Gives a resultset of all the inventory
 	ResultSet selectInventory()
 	{
@@ -74,7 +101,7 @@ public class PagerismSqlDriver {
 	void addToCart(int userid, int bookid)
 	{
 		String query = "insert into cart bookid, userid values(" + bookid + ", " + userid +");";
-		executeStuff(query);
+		executeInfoStuff(query);
 	}
 	
 	//Returns the user's id if there exists an account with the username and password
@@ -99,7 +126,7 @@ public class PagerismSqlDriver {
 	// Creates new user
 	void registerUser(String username, String password){
 		String query = "insert into users(USERNAME, PASSWORD, ACCOUNT) values(" + username + "," + password + ", 'Customer';";
-		executeStuff(query);
+		executeInfoStuff(query);
 	}
 	
 	//Finds books with titles that contain the given string in its name
@@ -150,14 +177,14 @@ public class PagerismSqlDriver {
 	void CreateOrderItems(int userid)
 	{
 		String query = "insert into orderitems(ordernum, booknum) select ordernum,bookid from cart, orders where cart.userid =" + userid + " and orders.userid = " + userid + " and orders.ordernum = (select max(ordernum) from orders);";
-		executeStuff(query);
+		executeInfoStuff(query);
 	}
 	
 	//Creates a new order for the user
 	void CreateOrder(int userid)
 	{
 		String query = "insert into orders(userid) values " + userid + ";";
-		executeStuff(query);
+		executeInfoStuff(query);
 		
 	}
 	
@@ -178,6 +205,6 @@ public class PagerismSqlDriver {
 	void deleteCart(int userid)
 	{
 		String query = "delete from cart where userid =" +userid+";";
-		executeStuff(query);
+		executeDeleteStuff(query);
 	}
 }
