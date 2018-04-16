@@ -188,6 +188,26 @@ public class PagerismSqlDriver {
 		
 	}
 	
+	int getCartTotal(int userid)
+	{
+		int total = -1;
+		String query = "select price from bookInfo where bookid in (select bookid from cart where userid =" + userid + ");";
+		ResultSet rs = executeStuff(query);
+		try
+		{
+			while(rs.next())
+			{
+				total = rs.getInt("price");
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		return total;
+	}
+	
 	ResultSet displayOrderNums(int userid)
 	{
 		String query = "select * from orders where userid =" + Integer.toString(userid) +";";
@@ -206,28 +226,6 @@ public class PagerismSqlDriver {
 	{
 		String query = "delete from cart where userid =" +Integer.toString(userid)+";";
 		executeDeleteStuff(query);
-	}
-	
-	int cartTotal(int userid)
-	{
-		int total = 0;
-		String query = "select price from bookInfo where bookInfo.bookid in (select bookid from cart where userid =" + Integer.toString(userid) + ");";
-		ResultSet rs = executeStuff(query);
-		
-		try
-		{
-			while(rs.next())
-			{
-				total += rs.getInt("price");
-			}
-		}
-		
-		catch(Exception e)
-		{
-			
-		}
-		
-		return total;
 	}
 	
 }

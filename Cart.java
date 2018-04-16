@@ -75,6 +75,7 @@ public class Cart extends HttpServlet {
 			{
 				out.println("Something went wrong " + e);
 			}
+		int total = hope.getCartTotal(userid)
 		out.println("<form method=\"get\" action=\"Shop\">");
 		out.println("<input type=\"submit\" value=\"Return To Shopping\"/>");
 		out.println("</form>");
