@@ -104,6 +104,8 @@ public class PagerismSqlDriver {
 		executeInfoStuff(query);
 	}
 	
+	
+	
 	//Returns the user's id if there exists an account with the username and password
 	//The user id is useful for the other queries
 	int logIn(String username, String password){
@@ -123,10 +125,49 @@ public class PagerismSqlDriver {
 		return id;
 	}
 	
+	void deleteUser(String username)
+	{
+		String query = "delete from users where username =" + username +";";
+		executeDeleteStuff(query);
+	}
+	
+	boolean validUser(String username)
+	{
+		String query = "select * from users where username =" + username + ";";
+		ResultSet rs = executeStuff(query);
+		
+		try
+		{
+		if(rs.next()){
+			return true;
+		}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		return false;
+	}
+	
 	// Creates new user
-	void registerUser(String username, String password){
+	int registerUser(String username, String password){
 		String query = "insert into users(USERNAME, PASSWORD, ACCOUNT) values(" + username + "," + password + ", 'Customer';";
 		executeInfoStuff(query);
+		
+		query = "select id from users where username =" + username + ";";
+		ResultSet rs = executeStuff(query);
+		
+		try
+		{
+			return rs.getInt("id");
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		return -1;
 	}
 	
 	//Finds books with titles that contain the given string in its name

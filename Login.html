@@ -2,23 +2,21 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Class Entry</title>
+<title>Login</title>
 </head>
 <body>
-
-<form>
+<form method = "post" action ="Login">
 Username:<br>
 <input type="text" name="username"><br>
 Password:<br>
 <input type="password" name="password"><br>
 <input type ="checkbox" name="log" value="create">Create Account?<br>
 <input type="submit" value="Login"/>
-</form>
-
-<form action = "Login" method="post">
+</form><br>
+<form method="post" action = "Login">
 <input type="hidden" name="log" value="forgot"/>
+<input type="text" name="username"><br>
 <input type="submit" value="Forgot Password?"/>
 </form>
-
 </body>
 </html>
