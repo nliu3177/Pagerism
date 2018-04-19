@@ -90,6 +90,12 @@ public class PagerismSqlDriver {
 		
 	}
 	
+	ResultSet searchGenre(String genre)
+	{
+		String query = "select * from bookInfo where genre =" + genre +";";
+		return executeStuff(query);
+	}
+	
 	// Shows the users cart when given the id of the user
 	ResultSet selectCart(int id)
 	{
@@ -261,6 +267,13 @@ public class PagerismSqlDriver {
 		String query = "select * from bookInfo where bookid in (select booknum from orderitems where ordernum =" + Integer.toString(ordernum)+");";
 		ResultSet rs = executeStuff(query);
 		return rs;
+	}
+	
+	
+	void removeFromCart(String title)
+	{
+		String query = "delete from cart where bookid in(select bookid from bookInfo where TITLE =" + title +";";
+		executeDeleteStuff(query);
 	}
 	
 	void deleteCart(int userid)
