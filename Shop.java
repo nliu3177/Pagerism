@@ -33,7 +33,7 @@ public class Shop extends HttpServlet {
 		out.println("<head></head>");
 		out.println("<body>");
 		out.println("<meta charset=\"ISO-8859-1\">");
-		out.println("<title>Class Entry</title>");
+		out.println("<title>Shop</title>");
 		out.println("</head>");
 		out.println("<body>");
     }
@@ -53,16 +53,54 @@ public class Shop extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		pageHead(out);
-		out.println(request.getParameter("userid"));
-		PagerismSqlDriver hope = new PagerismSqlDriver();
-		
-		ResultSet rs;
-		
-			rs = hope.selectInventory();
 			
+		//Form for going to the user servlet
+		out.println("<form method=\"get\" action=\"User\">");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("<input type=\"submit\" value=\"Userpage\"/>");
+		out.println("</form>");
+		out.println("<br>");
+		
+		
+		PagerismSqlDriver hope = new PagerismSqlDriver();
+		ResultSet rs = null;
+		String state = request.getParameter("state");
+
+		if(state == null)
+		{
+			state = "skip";
+		}
+		
+		if(state.compareTo("genre") == 0)
+		{
+			rs = hope.searchGenre(request.getParameter("genreInfo"));
+		}
+		else if(state.compareTo("search") == 0)
+		{
+			rs = hope.findBook(request.getParameter("searchFor"));
+		}
+		
+		else if(state.compareTo("add") == 0)
+		{
+			
+			hope.addToCart(request.getParameter("userid"), request.getParameter("bookid"));
+			out.println("<form method=\"get\" action=\"Shop\">");
+			out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+			out.println("<input type=\"submit\" value=\"Back to shopping\"/>");
+			out.println("</form>");
+			out.println("<br>");
+		}
+		
+		else
+		{
+			rs = hope.selectInventory();
+		}
+		
 		try{
 		while(rs.next())
 		{
+			out.println("Bookid: ");
+			out.println(rs.getString("bookid"));
 			out.println(rs.getString("title"));
 			out.println(" ");
 			out.println("$"+rs.getString("price"));
@@ -70,6 +108,8 @@ public class Shop extends HttpServlet {
 			out.println(rs.getString("A_First_Name"));
 			out.println(" ");
 			out.println(rs.getString("A_Last_Name"));
+			out.println(" ");
+			out.println(rs.getString("genre"));
 			out.println("<br>");
 		}
 		}
@@ -78,20 +118,41 @@ public class Shop extends HttpServlet {
 			out.println("Something went wrong " + e);
 		}
 		out.println("<br>");
-		out.println("<form method=\"post\" action=\"Shop\">");
-		out.println("Username: <input type=\"text\" name=\"username\"/><br/>");
-		out.println("Book Title: <input type=\"text\" name=\"booktitle\"/><br/>");
+		
+		
+		
+		//Form for adding to the cart
+		out.println("<form method=\"get\" action=\"Shop\">");
+		out.println("<input type=\"hidden\" name=\"state\" value = \"add\"/><br/>");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("Book Id: <input type=\"text\" name=\"bookid\"/><br/>");
 		out.println("<input type=\"submit\" value=\"Add To Cart\"/>");
 		out.println("</form>");
-		out.println("<form method=\"get\" action=\"Search\">");
-		out.println("Searchword: <input type=\"text\" name=\"search\"/><br/>");
+		out.println("<br>");
+		
+		//Form for searching by genre
+		out.println("<form method=\"get\" action=\"Shop\">");
+		out.println("<input type=\"hidden\" name=\"state\" value = \"genre\"/><br/>");
+		out.println("Search by Genre<br>");
+		out.println("<input type=\"radio\" name=\"genreInfo\" value = \"Nonfiction\"/> Nonfiction ");
+		out.println("<input type=\"radio\" name=\"genreInfo\" value = \"Adventure\"/> Adventure ");
+		out.println("<input type=\"radio\" name=\"genreInfo\" value = \"Fantasy\"/> Fantasy ");
+		out.println("<input type=\"radio\" name=\"genreInfo\" value = \"Mystery\"/> Mystery ");
+		out.println("<input type=\"radio\" name=\"genreInfo\" value = \"Science Fiction\"/> Science Fiction ");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("<br><input type=\"submit\" value=\"Display by Genre\"/>");
+		out.println("<br>");
+		out.println("</form>");
+		
+		
+		//Form for searching by keyword
+		out.println("<form method=\"get\" action=\"Shop\">");
+		out.println("Searchword: <input type=\"text\" name=\"searchFor\"/><br/>");
+		out.println("<input type=\"hidden\" name=\"state\" value = \"search\"/><br/>");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
 		out.println("<input type=\"submit\" value=\"Search\"/>");
 		out.println("</form>");
 		out.println("<br>");
-		out.println("<form method=\"get\" action=\"Cart\">");
-		out.println("Username: <input type=\"text\" name=\"username\"/><br/>");
-		out.println("<input type=\"submit\" value=\"Display Cart\"/>");
-		out.println("</form>");
 		pageEnd(out);
 		
 		
@@ -103,18 +164,7 @@ public class Shop extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PagerismSqlDriver hope = new PagerismSqlDriver();
 		
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		pageHead(out);
-		int userid = hope.getUserId(request.getParameter("username"));
-		int bookid = hope.getBookId(request.getParameter("booktitle"));
-		hope.addToCart(userid, bookid);
-		out.println("<form method=\"get\" action=\"Shop\">");
-		out.println("<input type=\"submit\" value=\"Return To Shopping\"/>");
-		out.println("</form>");
-		pageEnd(out);
 		
 		
 	}
