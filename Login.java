@@ -25,7 +25,7 @@ public class Login extends HttpServlet {
 		out.println("<head></head>");
 		out.println("<body>");
 		out.println("<meta charset=\"ISO-8859-1\">");
-		out.println("<title>Class Entry</title>");
+		out.println("<title>Login</title>");
 		out.println("</head>");
 		out.println("<body>");
     }
@@ -57,20 +57,27 @@ public class Login extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = -1;
+		int id = -2;
 		PrintWriter out = response.getWriter();
 		PagerismSqlDriver hope = new PagerismSqlDriver();
+		pageHead(out);
 		
-		if(request.getParameter("log") == "forgot")
+		String state = request.getParameter("log");
+		if(state == null)
 		{
-			pageHead(out);
+			state = "skip";
+		}
+		
+		if(state.compareTo("forgot") == 0)
+		{
+			
 			out.println("<form method=\"get\" action=\"Login\">");
 			if(hope.validUser(request.getParameter("username")))
 			{
 				out.println("<form\"post\" action=\"Login\">");
 				out.println("New Password: <input type=\"text\" name=\"password\"/><br/>");
 				out.println("<input type=\"hidden\" name=\"log\" value = \"create\"/><br/>");
-				out.println("name=\"username\" value = \"" + request.getParameter("username") + "\"/><br/>");
+				out.println("<input type =\"hidden\" name=\"username\" value = \"" + request.getParameter("username") + "\"/><br/>");
 				out.println("<input type=\"submit\" value=\"Submit\"/>");
 				out.println("</form>");
 			}
@@ -78,23 +85,31 @@ public class Login extends HttpServlet {
 			{
 				out.println("Invalid username");
 			}
-			pageEnd(out);
-			
 			
 		}
 		
-		else if(request.getParameter("log") == "create")
+		else if(state.compareTo("create") == 0)
 		{
 			id = hope.registerUser(request.getParameter("username"), request.getParameter("password"));
+			out.println("<form method=\"get\" action=\"Shop\">");
+			out.println("<input type=\"hidden\" name=\"userid\" value = \""+ id +"\"/>");
+			out.println("<input type=\"submit\" value=\"Creation Successful\"/>");
+			out.println("</form>");
 		}
 		
 		else
 		{
 			id = hope.logIn(request.getParameter("username"), request.getParameter("password"));
+			out.println("<form method=\"get\" action=\"Shop\">");
+			out.println("<input type=\"hidden\" name=\"userid\" value = \""+ id +"\"/>");
+			out.println("<input type=\"submit\" value=\"Login Successful!\"/>");
+			out.println("</form>");
+			out.println("<br>");
 		}
 		
 		
-		response.sendRedirect("<Shop>?userid="+ id);
+		pageEnd(out);
+		
 	}
 
 }
