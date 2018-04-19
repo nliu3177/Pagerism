@@ -31,7 +31,7 @@ public class User extends HttpServlet {
 		out.println("<head></head>");
 		out.println("<body>");
 		out.println("<meta charset=\"ISO-8859-1\">");
-		out.println("<title>Class Entry</title>");
+		out.println("<title>User</title>");
 		out.println("</head>");
 		out.println("<body>");
     }
@@ -86,7 +86,14 @@ public class User extends HttpServlet {
 		
 		pageHead(out);
 		
-		if(request.getParameter("state") == "display")
+		String state = request.getParameter("state");
+		
+		if(state == null)
+		{
+			state = "skip";
+		}
+		
+		if(state.compareTo("display") == 0)
 		{
 			rs = hope.displayOrderContents(Integer.parseInt(request.getParameter("ordernum")));
 		}
@@ -100,7 +107,7 @@ public class User extends HttpServlet {
 		out.println("<br>");
 		try{
 			
-			if(request.getParameter("state") == "display")
+			if(state.compareTo("display") == 0)
 			{
 				
 			while(rs.next())
