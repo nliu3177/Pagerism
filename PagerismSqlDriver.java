@@ -92,21 +92,21 @@ public class PagerismSqlDriver {
 	
 	ResultSet searchGenre(String genre)
 	{
-		String query = "select * from bookInfo where genre =" + genre +";";
+		String query = "select * from bookInfo where genre =\"" + genre +"\";";
 		return executeStuff(query);
 	}
 	
 	// Shows the users cart when given the id of the user
 	ResultSet selectCart(int id)
 	{
-		String query = "select * from cart where userid =" + Integer.toString(id) +";";
+		String query = "select * from bookInfo where bookInfo.bookid in(select bookid from cart where userid =" + id +");";
 		return executeStuff(query);
 	}
 	
 	// Insert into the cart using the users id and the books id
-	void addToCart(int userid, int bookid)
+	void addToCart(String userid, String bookid)
 	{
-		String query = "insert into cart bookid, userid values(" + Integer.toString(bookid) + ", " + Integer.toString(userid) +");";
+		String query = "insert into cart values(" + bookid + ", " + userid +");";
 		executeInfoStuff(query);
 	}
 	
@@ -115,13 +115,16 @@ public class PagerismSqlDriver {
 	//Returns the user's id if there exists an account with the username and password
 	//The user id is useful for the other queries
 	int logIn(String username, String password){
-		String query = "select * from users where USERNAME =" + username + "and PASSWORD =" + password +";";
+		String query = "select * from users where USERNAME =\"" + username + "\"and PASSWORD =\"" + password +"\";";
 		ResultSet rs = executeStuff(query);
 		
 		int id = -1;
 		
+		
 		try{
-			id = rs.getInt(0);
+			rs.beforeFirst();
+			rs.next();
+			id = rs.getInt(1);
 		}
 		catch(Exception e)
 		{
@@ -133,13 +136,13 @@ public class PagerismSqlDriver {
 	
 	void deleteUser(String username)
 	{
-		String query = "delete from users where username =" + username +";";
+		String query = "delete from users where username =\"" + username +"\";";
 		executeDeleteStuff(query);
 	}
 	
 	boolean validUser(String username)
 	{
-		String query = "select * from users where username =" + username + ";";
+		String query = "select * from users where username =\"" + username + "\";";
 		ResultSet rs = executeStuff(query);
 		
 		try
@@ -158,14 +161,16 @@ public class PagerismSqlDriver {
 	
 	// Creates new user
 	int registerUser(String username, String password){
-		String query = "insert into users(USERNAME, PASSWORD, ACCOUNT) values(" + username + "," + password + ", 'Customer';";
+		String query = "insert into users(USERNAME, PASSWORD, ACCOUNT) values(" + username + "," + password + ", \"Customer\";";
 		executeInfoStuff(query);
 		
-		query = "select id from users where username =" + username + ";";
+		query = "select id from users where username =\"" + username + "\";";
 		ResultSet rs = executeStuff(query);
 		
 		try
 		{
+			rs.beforeFirst();
+			rs.next();
 			return rs.getInt("id");
 		}
 		catch(Exception e)
@@ -185,13 +190,15 @@ public class PagerismSqlDriver {
 	
 	int getUserId(String username)
 	{
-		String query = "select id from users where USERNAME =" + username;
+		String query = "select id from users where USERNAME =\"" + username + "\";";
 		ResultSet rs = executeStuff(query);
 		
 		int id = -1;
 		
 		try{
-			id = rs.getInt("id");
+			rs.beforeFirst();
+			rs.next();
+			id = rs.getInt(1);
 		}
 		catch(Exception e)
 		{
@@ -203,13 +210,15 @@ public class PagerismSqlDriver {
 	
 	int getBookId(String booktitle)
 	{
-		String query = "select bookid from bookInfo where TITLE =" + booktitle;
+		String query = "select bookid from bookInfo where TITLE =\"" + booktitle + "\";";
 		ResultSet rs = executeStuff(query);
 		
 		int id = -1;
 		
 		try{
-			id = rs.getInt("bookid");
+			rs.beforeFirst();
+			rs.next();
+			id = rs.getInt(1);
 		}
 		catch(Exception e)
 		{
