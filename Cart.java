@@ -50,12 +50,18 @@ public class Cart extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
+		PagerismSqlDriver hope = new PagerismSqlDriver();
 		
 		pageHead(out);
 		
-		PagerismSqlDriver hope = new PagerismSqlDriver();
-		ResultSet rs = hope.selectCart(hope.getUserId(request.getParameter("username")));
-		out.println(request.getParameter("username"));
+		if(request.getParameter("state") == "removing")
+		{
+			hope.removeFromCart(request.getParameter("title"));
+		}
+		
+		
+		ResultSet rs = hope.selectCart(Integer.parseInt(request.getParameter("username")));
+		
 		out.println("Displaying Cart");
 		out.println("<br>");
 		try{
@@ -76,9 +82,28 @@ public class Cart extends HttpServlet {
 				out.println("Something went wrong " + e);
 			}
 		int total = hope.getCartTotal(Integer.parseInt(request.getParameter("userid")));
-		out.println("total");
-		out.println("<form method=\"get\" action=\"Shop\">");
-		out.println("<input type=\"submit\" value=\"Return To Shopping\"/>");
+		out.println(total);
+		
+		//Remove from cart
+		out.println("<form method=\"get\" action=\"Cart\">");
+		out.println("<input type=\"hidden\" name=\"state\" value = \"removing\"/><br/>");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("Book Title to Remove: <input type=\"text\" name=\"title\"/><br/>");
+		out.println("<input type=\"submit\" value=\"RemoveFromCart\"/>");
+		out.println("</form>");
+		out.println("<br>");
+		
+		//Checkout
+		out.println("<form method=\"POST\" action=\"Cart\">");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("<input type=\"submit\" value=\"Checkout\"/>");
+		out.println("</form>");
+		out.println("<br>");
+		
+		//Goes back to user page
+		out.println("<form method=\"get\" action=\"User\">");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("<input type=\"submit\" value=\"Back to Userpage\"/>");
 		out.println("</form>");
 		pageEnd(out);
 	}
@@ -87,7 +112,20 @@ public class Cart extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		PagerismSqlDriver hope = new PagerismSqlDriver();
 		
+		//Creates the orders
+		hope.CreateOrder(Integer.parseInt(request.getParameter("userid")));
+		hope.CreateOrderItems(Integer.parseInt(request.getParameter("userid")));
+		hope.deleteCart(Integer.parseInt(request.getParameter("userid")));
+		
+		pageHead(out);
+		out.println("<form method=\"get\" action=\"User\">");
+		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
+		out.println("<input type=\"submit\" value=\"Back to Userpage\"/>");
+		out.println("</form>");
+		pageEnd(out);
 	}
 
 }
