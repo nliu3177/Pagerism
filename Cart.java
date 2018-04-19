@@ -31,7 +31,7 @@ public class Cart extends HttpServlet {
 		out.println("<head></head>");
 		out.println("<body>");
 		out.println("<meta charset=\"ISO-8859-1\">");
-		out.println("<title>Class Entry</title>");
+		out.println("<title>Cart</title>");
 		out.println("</head>");
 		out.println("<body>");
     }
@@ -53,14 +53,20 @@ public class Cart extends HttpServlet {
 		PagerismSqlDriver hope = new PagerismSqlDriver();
 		
 		pageHead(out);
+		String state = request.getParameter("state");
 		
-		if(request.getParameter("state") == "removing")
+		if(state == null)
+		{
+			state = "skip";
+		}
+		
+		if(state.compareTo("removing") == 0)
 		{
 			hope.removeFromCart(request.getParameter("title"));
 		}
 		
 		
-		ResultSet rs = hope.selectCart(Integer.parseInt(request.getParameter("username")));
+		ResultSet rs = hope.selectCart(Integer.parseInt(request.getParameter("userid")));
 		
 		out.println("Displaying Cart");
 		out.println("<br>");
@@ -82,10 +88,10 @@ public class Cart extends HttpServlet {
 				out.println("Something went wrong " + e);
 			}
 		int total = hope.getCartTotal(Integer.parseInt(request.getParameter("userid")));
-		out.println(total);
+		out.println("Total is: $" + total);
 		
 		//Remove from cart
-		out.println("<form method=\"get\" action=\"Cart\">");
+		out.println("<br><form method=\"get\" action=\"Cart\">");
 		out.println("<input type=\"hidden\" name=\"state\" value = \"removing\"/><br/>");
 		out.println("<input type=\"hidden\" name=\"userid\" value = \""+ request.getParameter("userid") +"\"/>");
 		out.println("Book Title to Remove: <input type=\"text\" name=\"title\"/><br/>");
