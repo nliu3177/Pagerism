@@ -53,7 +53,7 @@ public class Shop extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		pageHead(out);
-		
+		out.println(request.getParameter("userid"));
 		PagerismSqlDriver hope = new PagerismSqlDriver();
 		
 		ResultSet rs;
